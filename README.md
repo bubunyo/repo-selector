@@ -68,6 +68,8 @@ Click the toolbar icon to open the popup. The search box is focused automaticall
 | `tabs` | Open repos and focus an existing matching tab. |
 | `storage` | Cache the repo list for instant painting. |
 
+All processing is local — no data leaves your device. See [PRIVACY.md](PRIVACY.md).
+
 ## Project structure
 
 ```
@@ -80,10 +82,3 @@ repo-selector/
 └── icons/          # icon16/48/128.png (rasterized from icon.svg)
 ```
 
-### Regenerating icons
-
-The PNGs are rasterized from `icon.svg` with [`rsvg-convert`](https://gitlab.gnome.org/GNOME/librsvg):
-
-```sh
-for s in 16 48 128; do rsvg-convert -w $s -h $s icon.svg -o icons/icon$s.png; done
-```

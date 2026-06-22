@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate extension
+        run: bash .github/scripts/validate.sh
+
+      - name: Version guard
+        id: ver
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./manifest.json').version")"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "Tag v$VERSION already exists. Bump the version in manifest.json." >&2
+            exit 1
+          fi
+
+          LATEST_TAG="$(git tag -l 'v*' --sort=-v:refname | head -n1)"
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No previous release tag found; treating v$VERSION as the first release."
+            exit 0
+          fi
+
+          LATEST="${LATEST_TAG#v}"
+          if [ "$VERSION" = "$LATEST" ]; then
+            echo "Version $VERSION is unchanged from $LATEST_TAG. Bump the version in manifest.json." >&2
+            exit 1
+          fi
+
+          HIGHEST="$(printf '%s\n%s\n' "$VERSION" "$LATEST" | sort -V | tail -n1)"
+          if [ "$HIGHEST" != "$VERSION" ]; then
+            echo "Version $VERSION is not greater than the latest release $LATEST_TAG." >&2
+            exit 1
+          fi
+
+          echo "Releasing v$VERSION (previous: $LATEST_TAG)."
+
+      - name: Package extension
+        run: zip -r extension.zip manifest.json popup.html popup.css popup.js icons
+
+      - name: Publish to Chrome Web Store
+        uses: mnao305/chrome-extension-upload@v5
+        with:
+          file-path: extension.zip
+          extension-id: ${{ secrets.EXTENSION_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+          client-secret: ${{ secrets.CLIENT_SECRET }}
+          refresh-token: ${{ secrets.REFRESH_TOKEN }}
+          publish: true
+
+      - name: Tag and create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.ver.outputs.version }}"
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
+          gh release create "v$VERSION" extension.zip \
+            --title "v$VERSION" \
+            --generate-notes
