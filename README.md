@@ -4,6 +4,8 @@ A Chrome extension (Manifest V3) that opens a fast, fuzzy-searchable dropdown of
 GitHub repositories you've visited recently. Jump straight to a repo's **Code**,
 **Pull Requests**, **Issues**, or **Actions** with a click or a keystroke.
 
+![Recent GitHub Repos popup](docs/screenshot.png)
+
 ## Features
 
 - **Recent repos** — reads your browser history (last 90 days) and lists the GitHub
