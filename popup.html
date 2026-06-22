@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recent GitHub Repos</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="search-bar">
+    <input
+      id="search"
+      type="text"
+      placeholder="Search repositories…"
+      autocomplete="off"
+      spellcheck="false"
+      autofocus
+    />
+  </div>
+  <ul id="results" class="results"></ul>
+  <div id="empty" class="empty" hidden>No recent repositories found.</div>
+  <div class="hint">
+    <span>↑↓ move</span>
+    <span>Tab switch section</span>
+    <span>Alt+C/P/I/A jump</span>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
