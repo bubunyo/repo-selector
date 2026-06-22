@@ -1,8 +1,11 @@
 {
   "manifest_version": 3,
   "name": "Recent GitHub Repos",
+  "short_name": "GitHub Repos",
   "version": "1.0.0",
   "description": "Quickly jump to recently visited GitHub repositories with fuzzy search.",
+  "homepage_url": "https://github.com/bubunyo/repo-selector",
+  "minimum_chrome_version": "102",
   "action": {
     "default_popup": "popup.html",
     "default_title": "Recent GitHub Repos",
