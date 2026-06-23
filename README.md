@@ -82,3 +82,7 @@ repo-selector/
 └── icons/          # icon16/48/128.png (rasterized from icon.svg)
 ```
 
+## License
+
+[MIT](LICENSE) © Bubunyo Nyavor
+
